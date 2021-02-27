@@ -121,6 +121,10 @@ abstract class VisibilityAwareState<T extends StatefulWidget> extends State<T>
 
   void onVisibilityChanged(WidgetVisibility visibility) {}
 
+  bool isVisible() {
+    return _widgetVisibility == WidgetVisibility.VISIBLE;
+  }
+
   void finish() {
     // close the whole screen
     if (Navigator.canPop(context)) {
