@@ -1,8 +1,9 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:visibility_aware_state/extensions.dart';
 
 abstract class VisibilityAwareState<T extends StatefulWidget> extends State<T>
-// ignore: prefer_mixin
+    // ignore: prefer_mixin
     with WidgetsBindingObserver, _StackChangedListener {
 
   VisibilityAwareState();
@@ -13,7 +14,7 @@ abstract class VisibilityAwareState<T extends StatefulWidget> extends State<T>
 
   bool _isWidgetRemoved = false;
 
-  WidgetVisibility _widgetVisibility;
+  WidgetVisibility? _widgetVisibility;
 
   /// Adds [widgetName] to the set.
   ///
@@ -30,6 +31,10 @@ abstract class VisibilityAwareState<T extends StatefulWidget> extends State<T>
     return result;
   }
 
+  /// Removes [widgetName] from the set.
+  ///
+  /// Returns `true` if [widgetName] was in the set, and `false` if not.
+  /// The method has no effect if [widgetName] was not in the set.
   static bool _removeFromStack(String widgetName) {
     final bool result = _widgetStack.remove(widgetName);
     if (result) {
@@ -59,14 +64,14 @@ abstract class VisibilityAwareState<T extends StatefulWidget> extends State<T>
   void initState() {
     super.initState();
     //debugPrint('$runtimeType.initState()');
-    WidgetsBinding.instance.addPostFrameCallback(_onWidgetLoaded);
-    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance!.addPostFrameCallback(_onWidgetLoaded);
+    WidgetsBinding.instance!.addObserver(this);
   }
 
   void _onWidgetLoaded(_) {
     //debugPrint('$runtimeType.onWidgetLoaded()');
     _listeners.add(this);
-    WidgetsBinding.instance.addPersistentFrameCallback((timeStamp) {
+    WidgetsBinding.instance!.addPersistentFrameCallback((timeStamp) {
       //print(runtimeType);
       if (!_isWidgetRemoved && _addToStack(runtimeType.toString())) {
         //debugPrint('Adding $runtimeType to stack. widgetStack = $_widgetStack');
@@ -77,7 +82,7 @@ abstract class VisibilityAwareState<T extends StatefulWidget> extends State<T>
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
+    WidgetsBinding.instance!.removeObserver(this);
     //debugPrint('$runtimeType.dispose()');
     _isWidgetRemoved = true;
     _listeners.remove(this);
@@ -112,10 +117,7 @@ abstract class VisibilityAwareState<T extends StatefulWidget> extends State<T>
       _widgetVisibility = visibility;
       onVisibilityChanged(visibility);
 
-      debugPrint('$runtimeType.onVisibilityChanged(${visibility
-          .toString()
-          .split('.')
-          .last}) - $_widgetStack');
+      debugPrint('$runtimeType.onVisibilityChanged(${enumToString(visibility)}) - $_widgetStack');
     }
   }
 

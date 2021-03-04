@@ -1,11 +1,10 @@
 name: visibility_aware_state
 description: A state for StatefulWidgets that is aware of its visibility.
-version: 0.9.2
-author: Timo Baehr<timo.baehr@gmail.com>
+version: 1.0.0
 homepage: https://github.com/timobaehr/visibility_aware_state
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: '>=2.12.0 <3.0.0'
   flutter: ">=1.17.0"
 
 dependencies:

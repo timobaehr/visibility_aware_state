@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.0] - 04.03.2021
+
+* Null safety
+
 ## [0.9.2] - 27.02.2021
 
 * Added method `bool isVisible()`
