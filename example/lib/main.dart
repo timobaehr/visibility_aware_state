@@ -10,6 +10,9 @@ class Example extends StatefulWidget {
 }
 
 class _ExampleState extends VisibilityAwareState<Example> {
+
+  _ExampleState(): super(debugPrintsEnabled: true);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

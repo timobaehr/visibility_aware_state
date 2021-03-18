@@ -1,16 +1,23 @@
+import 'package:flutter/foundation.dart';
+
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:visibility_aware_state/extensions.dart';
 
 abstract class VisibilityAwareState<T extends StatefulWidget> extends State<T>
-    // ignore: prefer_mixin
+// ignore: prefer_mixin
     with WidgetsBindingObserver, _StackChangedListener {
 
-  VisibilityAwareState();
+  VisibilityAwareState({
+    this.debugPrintsEnabled = false
+  });
 
   static final Set<String> _widgetStack = {};
+  static final Map<String, int> _widgetStackTimestamps = {};
 
   static final Set<_StackChangedListener> _listeners = {};
+
+  bool debugPrintsEnabled;
 
   bool _isWidgetRemoved = false;
 
@@ -23,6 +30,7 @@ abstract class VisibilityAwareState<T extends StatefulWidget> extends State<T>
   static bool _addToStack(String widgetName) {
     final bool result = _widgetStack.add(widgetName);
     if (result) {
+      _widgetStackTimestamps[widgetName] = DateTime.now().millisecondsSinceEpoch;
       for (final listener in _listeners) {
         listener._onAddToStack(widgetName);
       }
@@ -38,6 +46,7 @@ abstract class VisibilityAwareState<T extends StatefulWidget> extends State<T>
   static bool _removeFromStack(String widgetName) {
     final bool result = _widgetStack.remove(widgetName);
     if (result) {
+      _widgetStackTimestamps.remove(widgetName);
       //debugPrint('_removeFromStack($widgetName) returns true, $_widgetStack');
       for (final listener in _listeners) {
         listener._onRemoveFromStack();
@@ -48,14 +57,14 @@ abstract class VisibilityAwareState<T extends StatefulWidget> extends State<T>
 
   @override
   void _onAddToStack(String widgetName) {
-    if (_widgetVisibility != WidgetVisibility.INVISIBLE && runtimeType.toString() != widgetName) {
+    if (_widgetVisibility != WidgetVisibility.INVISIBLE && runtimeType.toString() != widgetName && !_wasAddedTogetherWith(widgetName)) {
       _onVisibilityChanged(WidgetVisibility.INVISIBLE);
     }
   }
 
   @override
   void _onRemoveFromStack() {
-    if (runtimeType.toString() == _widgetStack.last) {
+    if (runtimeType.toString() == _widgetStack.last || _wasAddedTogetherWith(_widgetStack.last)) {
       _onVisibilityChanged(WidgetVisibility.VISIBLE);
     }
   }
@@ -96,15 +105,19 @@ abstract class VisibilityAwareState<T extends StatefulWidget> extends State<T>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     // move app to background: inactive -> paused
     // open app from background: resumed
-    debugPrint('$runtimeType.didChangeAppLifecycleState($state)');
+    if (debugPrintsEnabled) {
+      debugPrint('$runtimeType.didChangeAppLifecycleState($state)');
+    }
     if (state == AppLifecycleState.inactive) {
-      // app is inactive
+      // app is inactive (called on iOS if app overview is shown)
+      _onVisibilityChanged(WidgetVisibility.INVISIBLE);
     } else if (state == AppLifecycleState.paused) {
       // user is about quit our app temporally
+      // (called on iOS if the app is in background and overview was closed)
       _onVisibilityChanged(WidgetVisibility.INVISIBLE);
     } else if (state == AppLifecycleState.resumed) {
       // user returned to our app
-      if (runtimeType.toString() == _widgetStack.last) {
+      if (runtimeType.toString() == _widgetStack.last || _wasAddedTogetherWith(_widgetStack.last)) {
         _onVisibilityChanged(WidgetVisibility.VISIBLE);
       }
     } else if (state == AppLifecycleState.detached) {
@@ -112,12 +125,35 @@ abstract class VisibilityAwareState<T extends StatefulWidget> extends State<T>
     }
   }
 
+  bool _wasAddedTogetherWith(String otherWidgetsName) {
+    final int? timeOtherWasAdded = _widgetStackTimestamps[otherWidgetsName];
+    final int? timeAdded = _widgetStackTimestamps[runtimeType.toString()];
+    if (timeOtherWasAdded == null || timeAdded == null) {
+      return false;
+    }
+
+    final int diff = (timeAdded > timeOtherWasAdded)
+        ? timeAdded - timeOtherWasAdded
+        : timeOtherWasAdded - timeAdded;
+
+    if (diff < 50) {
+      if (debugPrintsEnabled) {
+        debugPrint('diff of $otherWidgetsName and ${runtimeType.toString()}: $diff');
+      }
+      return true;
+    }
+    return false;
+  }
+
   void _onVisibilityChanged(WidgetVisibility visibility) {
     if (_widgetVisibility != visibility) {
       _widgetVisibility = visibility;
       onVisibilityChanged(visibility);
 
-      debugPrint('$runtimeType.onVisibilityChanged(${enumToString(visibility)}) - $_widgetStack');
+      if (debugPrintsEnabled) {
+        debugPrint('$runtimeType.onVisibilityChanged(${enumToString(
+            visibility)}) - $_widgetStack');
+      }
     }
   }
 

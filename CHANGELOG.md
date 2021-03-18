@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.0.1] - 18.03.2021
+
+* Fix if multiple widgets use this plugin at the same time
+* Disable debugPrints by default but can be enabled if required
+
 ## [1.0.0] - 04.03.2021
 
 * Null safety
