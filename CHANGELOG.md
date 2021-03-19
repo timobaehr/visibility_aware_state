@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.0.2] - 19.03.2021
+
+* Bug fix: Make check on stack if not empty before removing widgets from stack
+* dartfmt formattings
+
 ## [1.0.1] - 18.03.2021
 
 * Fix if multiple widgets use this plugin at the same time
