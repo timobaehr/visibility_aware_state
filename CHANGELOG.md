@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.3] - 29.04.2021
+
+* Bug fix: Stack is empty at first start, so do not ask for last
+
 ## [1.0.2] - 19.03.2021
 
 * Bug fix: Make check on stack if not empty before removing widgets from stack
