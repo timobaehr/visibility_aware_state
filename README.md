@@ -13,7 +13,7 @@ library offers `void onVisibilityChanged(WidgetVisibility visibility)` to do som
 Notice when:
 * the app is put in the background or brought out of the background
 * the widget initially becomes visible
-* the widget becomes invisble (a new page is pushed)
+* the widget becomes invisible (a new page is pushed)
 * the widget is removed from stack
 * the widget becomes visible again (e.g. back button on Android is pressed)
 

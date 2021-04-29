@@ -121,7 +121,7 @@ abstract class VisibilityAwareState<T extends StatefulWidget> extends State<T>
       _onVisibilityChanged(WidgetVisibility.INVISIBLE);
     } else if (state == AppLifecycleState.resumed) {
       // user returned to our app
-      if (runtimeType.toString() == _widgetStack.last ||
+      if (_widgetStack.isNotEmpty || runtimeType.toString() == _widgetStack.last ||
           _wasAddedTogetherWith(_widgetStack.last)) {
         _onVisibilityChanged(WidgetVisibility.VISIBLE);
       }

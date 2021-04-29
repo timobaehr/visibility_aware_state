@@ -1,6 +1,6 @@
 name: visibility_aware_state
 description: A state for StatefulWidgets that is aware of its visibility.
-version: 1.0.2
+version: 1.0.3
 homepage: https://github.com/timobaehr/visibility_aware_state
 
 environment:
