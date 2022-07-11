@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.4] - 11.07.2022
+
+* Warning fixed: WidgetsBinding.instance instead WidgetsBinding.instance!
+
 ## [1.0.3] - 29.04.2021
 
 * Bug fix: Stack is empty at first start, so do not ask for last
