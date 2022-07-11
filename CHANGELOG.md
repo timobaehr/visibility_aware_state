@@ -1,7 +1,8 @@
 # Changelog
 
-## [1.0.4] - 11.07.2022
+## [1.0.5] - 11.07.2022
 
+* Fix: _LinkedHashSetMixin.last(_LinkedHashSetMixin.java)
 * Warning fixed: WidgetsBinding.instance instead WidgetsBinding.instance!
 
 ## [1.0.3] - 29.04.2021
