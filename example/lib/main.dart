@@ -1,74 +1,38 @@
 import 'package:flutter/material.dart';
-import 'package:visibility_aware_state/visibility_aware_state.dart';
+import 'package:go_router/go_router.dart';
 
-void main() =>
-    runApp(MaterialApp(debugShowCheckedModeBanner: false, home: Example()));
+import 'start_screen.dart';
+import 'screen_2.dart';
 
-class Example extends StatefulWidget {
-  @override
-  _ExampleState createState() => _ExampleState();
-}
+void main() => runApp(ExampleApp());
 
-class _ExampleState extends VisibilityAwareState<Example> {
-
-  _ExampleState(): super(debugPrintsEnabled: true);
+class ExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        brightness: Brightness.dark,
-        title: Text('Example app'),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              Text('Welcome to visibility_aware_state example app.',
-                style: Theme.of(context).textTheme.headline5),
-              _headline('Features'),
-              _item('Detect when a widget becomes invisible or visible'),
-              _item('Check if the widget is currently visible using `bool isVisible()`'),
-              _item('Close the current screen via `finish()` (Android style)'),
-            ],
-          ),
-        ),
-      ),
+    return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
+      routeInformationProvider: _router.routeInformationProvider,
+      routeInformationParser: _router.routeInformationParser,
+      routerDelegate: _router.routerDelegate,
+      title: 'VisibilityAwareState Example',
     );
   }
 
-  Widget _headline(String headline) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 16),
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: Text(headline,
-            style: TextStyle(fontWeight: FontWeight.bold)),
+  final GoRouter _router = GoRouter(
+    routes: <GoRoute>[
+      GoRoute(
+        path: '/',
+        builder: (BuildContext context, GoRouterState state) {
+          return StartScreen();
+        },
       ),
-    );
-  }
-
-  Widget _item(String item) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Text('► $item'),
-    );
-  }
-
-  @override
-  void onVisibilityChanged(WidgetVisibility visibility) {
-    switch(visibility) {
-      case WidgetVisibility.VISIBLE:
-        // Like Android's Activity.onResume()
-        break;
-      case WidgetVisibility.INVISIBLE:
-        // Like Android's Activity.onPause()
-        break;
-      case WidgetVisibility.GONE:
-        // Like Android's Activity.onDestroy()
-        break;
-    }
-    super.onVisibilityChanged(visibility);
-  }
+      GoRoute(
+        path: '/page2',
+        builder: (BuildContext context, GoRouterState state) {
+          return Screen2();
+        },
+      ),
+    ],
+  );
 }

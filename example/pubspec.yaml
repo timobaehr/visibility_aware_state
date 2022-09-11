@@ -4,11 +4,13 @@ description: This example demonestrate the usage of visibility_ware_state packag
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.18.0 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
+
+  go_router: ^4.4.1
 
   visibility_aware_state:
     # When depending on this package from a real application you should use:
