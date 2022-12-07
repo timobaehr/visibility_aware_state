@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:visibility_aware_state/extensions.dart';
@@ -75,14 +77,14 @@ abstract class VisibilityAwareState<T extends StatefulWidget> extends State<T>
   void initState() {
     super.initState();
     //debugPrint('$runtimeType.initState()');
-    WidgetsBinding.instance.addPostFrameCallback(_onWidgetLoaded);
-    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance?.addPostFrameCallback(_onWidgetLoaded);
+    WidgetsBinding.instance?.addObserver(this);
   }
 
   void _onWidgetLoaded(_) {
     //debugPrint('$runtimeType.onWidgetLoaded()');
     _listeners.add(this);
-    WidgetsBinding.instance.addPersistentFrameCallback((timeStamp) {
+    WidgetsBinding.instance?.addPersistentFrameCallback((timeStamp) {
       //print(runtimeType);
       if (!_isWidgetRemoved && _addToStack(runtimeType.toString())) {
         //debugPrint('Adding $runtimeType to stack. widgetStack = $_widgetStack');
@@ -93,7 +95,7 @@ abstract class VisibilityAwareState<T extends StatefulWidget> extends State<T>
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
+    WidgetsBinding.instance?.removeObserver(this);
     //debugPrint('$runtimeType.dispose()');
     _isWidgetRemoved = true;
     _listeners.remove(this);
